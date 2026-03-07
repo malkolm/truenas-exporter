@@ -25,11 +25,12 @@ smarttests_timer = Summary('truenas_exporter_smarttests_seconds', 'Time spent ma
 stats_timer = Summary('truenas_exporter_stats_seconds', 'Time spent making stats API requests')
 
 class TrueNasCollector(object):
-    def __init__(self, target, username, password, cache_smart = 24, skip_snmp = False, skip_df_regex = None):
+    def __init__(self, target, username, password, cache_smart = 24, skip_snmp = False, skip_df_regex = None, skip_stats = False):
         self.target = target
         self.username = username
         self.password = password
         self.skip_snmp = skip_snmp
+        self.skip_stats = skip_stats
         self.cache_smart = 60*60*cache_smart
         self.skip_df_regex = skip_df_regex
         self.last_smart_result = {}
@@ -774,6 +775,8 @@ class TrueNasCollector(object):
     @stats_timer.time()
     def _collect_stats(self):
         """ Return all current data from CollectD collections """
+        if self.skip_stats:
+            return []
 
         # This is complicated for a bunch of performance reasons
         # /api/v2.0/stats/get_sources and available metrics for the source

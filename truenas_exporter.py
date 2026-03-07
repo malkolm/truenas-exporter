@@ -44,6 +44,9 @@ if __name__ == '__main__':
     parser.add_argument('--skip-df-regex', dest='skip_df_regex', default=None,
         help='Regular expression that will match filesystems to skip for costly' +
         'df metrics.')
+    parser.add_argument('--skip-stats', dest='skip_stats', default=False,
+        action='store_true', help='Skip CollectD stats metrics (stats/get_data). ' +
+        'Useful when rrdcached is unavailable or collection is too slow.')
 
     args = parser.parse_args()
 
@@ -84,7 +87,7 @@ if __name__ == '__main__':
             parser.print_help()
             exit(1)
 
-    REGISTRY.register(TrueNasCollector(target, username, password, cache_smart, skip_snmp, skip_df_regex))
+    REGISTRY.register(TrueNasCollector(target, username, password, cache_smart, skip_snmp, skip_df_regex, args.skip_stats))
     print(f"Starting listening on 0.0.0.0:{args.port} now...", file=sys.stderr)
     httpd = make_server('', int(args.port), truenas_exporter, handler_class=_SilentHandler)
     httpd.serve_forever()
