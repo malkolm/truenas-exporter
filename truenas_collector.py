@@ -632,12 +632,13 @@ class TrueNasCollector(object):
             infolabels
         )
         ha_status = 0
-        if network['hostname_virtual'] and network['hostname_local'] == network['hostname']:
+        hostname_virtual = network.get('hostname_virtual')
+        if hostname_virtual and network.get('hostname_local') == network.get('hostname'):
             ha_status = 1
-        elif network['hostname_virtual'] and network['hostname_local'] == network['hostname_b']:
+        elif hostname_virtual and network.get('hostname_local') == network.get('hostname_b'):
             ha_status = 2
         ha.add_metric(
-            [info['hostname'], network['hostname'], network['hostname_b']],
+            [info['hostname'], network.get('hostname', ''), network.get('hostname_b', '')],
             ha_status
         )
 
