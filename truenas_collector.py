@@ -617,12 +617,13 @@ class TrueNasCollector(object):
             [info['hostname']],
             info['physmem']
         )
+        license = info.get('license') or {}
         infolabels = {
             'hostname': info['hostname'],
             'version': info['version'],
-            'serial': info['license']['system_serial'],
-            'serial_ha': info['license']['system_serial_ha'],
-            'model': info['license']['model'],
+            'serial': license.get('system_serial', ''),
+            'serial_ha': license.get('system_serial_ha', ''),
+            'model': license.get('model', ''),
             'product': info['system_product'],
             'manufacturer': info['system_manufacturer']
         }
