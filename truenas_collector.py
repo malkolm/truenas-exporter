@@ -78,7 +78,12 @@ class TrueNasCollector(object):
                   file=sys.stderr)
             print(str(e), file=sys.stderr)
             return {}
-        return r.json()
+        try:
+            return r.json()
+        except requests.exceptions.JSONDecodeError as e:
+            print(f'JSON decode error for {request_path}: {e}', file=sys.stderr)
+            print(f'Response text: {repr(r.text[:200])}', file=sys.stderr)
+            return {}
 
     @rsynctask_timer.time()
     def _collect_rsynctask(self):
