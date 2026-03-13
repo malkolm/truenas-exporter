@@ -999,7 +999,7 @@ class TrueNasCollector(object):
                 "submetric": submetric,
                 "metrictype": "GAUGE"
             }]
-        for metric in ['active', 'cache', 'free', 'inactive', 'laundry', 'wired']:
+        for metric in ['active', 'free', 'inactive', 'laundry', 'wired']:
             sources_request['stats_list'] += [{
                 "source": "memory",
                 "type": '-'.join(['memory', metric]),
@@ -1059,7 +1059,7 @@ class TrueNasCollector(object):
             "submetric": 'value',
             "metrictype": "GAUGE"
         }]
-        for metric in ['cache_eviction-cached', 'cache_eviction-eligible', 'cache_eviction-ineligible', 'cache_operation-allocated', 'cache_operation-deleted', 'cache_result-demand_data-hit', 'cache_result-demand_data-miss', 'cache_result-demand_metadata-hit', 'cache_result-demand_metadata-miss', 'cache_result-mfu-hit', 'cache_result-mfu_ghost-hit', 'cache_result-mru-hit', 'cache_result-mru_ghost-hit', 'cache_result-prefetch_data-hit', 'cache_result-prefetch_data-miss', 'cache_result-prefetch_metadata-hit', 'cache_result-prefetch_metadata-miss', 'hash_collisions', 'memory_throttle_count', 'mutex_operations-miss']:
+        for metric in ['cache_eviction-cached', 'cache_eviction-eligible', 'cache_eviction-ineligible', 'cache_operation-deleted', 'cache_result-demand_data-hit', 'cache_result-demand_data-miss', 'cache_result-demand_metadata-hit', 'cache_result-demand_metadata-miss', 'cache_result-mfu-hit', 'cache_result-mfu_ghost-hit', 'cache_result-mru-hit', 'cache_result-mru_ghost-hit', 'cache_result-prefetch_data-hit', 'cache_result-prefetch_data-miss', 'cache_result-prefetch_metadata-hit', 'cache_result-prefetch_metadata-miss', 'hash_collisions', 'memory_throttle_count', 'mutex_operations-miss']:
             sources_request['stats_list'] += [{
                 "source": "zfs_arc",
                 "type": metric,
@@ -1071,7 +1071,7 @@ class TrueNasCollector(object):
                 "submetric": 'value',
                 "metrictype": "DERIVE"
             }]
-        for metric in ['cache_ratio-arc', 'cache_ratio-L2', 'cache_size-anon_size', 'cache_size-arc', 'cache_size-c', 'cache_size-c_max', 'cache_size-c_min', 'cache_size-hdr_size', 'cache_size-L2', 'cache_size-metadata_size', 'cache_size-mfu_ghost_size', 'cache_size-mfu_size', 'cache_size-mru_ghost_size', 'cache_size-mru_size', 'cache_size-other_size', 'cache_size-p']:
+        for metric in ['cache_ratio-arc', 'cache_ratio-L2', 'cache_size-anon_size', 'cache_size-arc', 'cache_size-bonus_size', 'cache_size-c', 'cache_size-c_max', 'cache_size-c_min', 'cache_size-dbuf_size', 'cache_size-dnode_size', 'cache_size-hdr_size', 'cache_size-L2', 'cache_size-metadata_size', 'cache_size-mfu_ghost_size', 'cache_size-mfu_size', 'cache_size-mru_ghost_size', 'cache_size-mru_size', 'cache_size-p']:
             sources_request['stats_list'] += [{
                 "source": "zfs_arc",
                 "type": metric,
