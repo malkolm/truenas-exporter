@@ -1151,6 +1151,7 @@ class TrueNasCollector(object):
                 "stats_list": sources_request['stats_list'][index:index+max_items],
                 "stats-filter": sources_request['stats-filter']
             }
+            index += max_items
             if this_sources_request['stats_list']:
                 try:
                     data = self.request("stats/get_data", this_sources_request)
@@ -1167,7 +1168,6 @@ class TrueNasCollector(object):
                 else:
                     # First data returns needs to create the return_data['data'] structure
                     return_data['data'] = response
-            index += max_items
 
         return return_data
 
