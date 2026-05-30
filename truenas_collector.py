@@ -284,7 +284,7 @@ class TrueNasCollector(object):
 
         metrics = GaugeMetricFamily(
             'truenas_interface_state',
-            'Interface state/info inventory:  0==UNKNOWN, 1==LINK_STATE_UP, 2==LINK_STATE_DOWN',
+            'Interface state/info inventory:  0==UNKNOWN, 1==LINK_STATE_UP, 2==LINK_STATE_DOWN, 3==LINK_STATE_UNKNOWN',
             labels=["name", "description", "type"])
 
         for interface in interfaces:
@@ -300,6 +300,8 @@ class TrueNasCollector(object):
             return 1
         if value == "LINK_STATE_DOWN":
             return 2
+        if value == "LINK_STATE_UNKNOWN":
+            return 3
 
         unknown_enumerations.inc()
         print(f"Unknown/new Interface state: {value}. Needs to be added to " +
@@ -383,16 +385,20 @@ class TrueNasCollector(object):
             labels=["name", "path", "device", "errortype"])
 
         for pool in pools:
+            pool_path = pool['path'] or ""
             status.add_metric(
-                [pool['name'], pool['path']],
+                [pool['name'], pool_path],
                 self._pool_health_enum(pool['status'])
             )
             healthy.add_metric(
-                [pool['name'], pool['path']],
+                [pool['name'], pool_path],
                 int(pool['healthy'])
             )
-            for topology in pool['topology']['data']:
-                for disk in topology['children']:
+            topology = pool.get('topology')
+            if topology is None:
+                continue
+            for vdev in (topology.get('data') or []):
+                for disk in (vdev.get('children') or []):
                     label = "None"
                     if 'disk' in disk:
                         label = disk['disk']
@@ -400,22 +406,22 @@ class TrueNasCollector(object):
                         label = disk['path']
                     label = label or "unlabelled"
                     disk_status.add_metric(
-                        [pool['name'], pool['path'], label, "false"],
+                        [pool['name'], pool_path, label, "false"],
                         self._pool_health_enum(disk['status'])
                     )
                     disk_errors.add_metric(
-                        [pool['name'], pool['path'], label, "read"],
+                        [pool['name'], pool_path, label, "read"],
                         disk['stats']['read_errors']
                     )
                     disk_errors.add_metric(
-                        [pool['name'], pool['path'], label, "write"],
+                        [pool['name'], pool_path, label, "write"],
                         disk['stats']['write_errors']
                     )
                     disk_errors.add_metric(
-                        [pool['name'], pool['path'], label, "checksum"],
+                        [pool['name'], pool_path, label, "checksum"],
                         disk['stats']['checksum_errors']
                     )
-            for disk in pool['topology']['spare']:
+            for disk in (topology.get('spare') or []):
                 label = "None"
                 if 'disk' in disk:
                     label = disk['disk']
@@ -423,19 +429,19 @@ class TrueNasCollector(object):
                     label = disk['path']
                 label = label or "unlabelled"
                 disk_status.add_metric(
-                    [pool['name'], pool['path'], label, "true"],
+                    [pool['name'], pool_path, label, "true"],
                     self._pool_health_enum(disk['status'])
                 )
                 disk_errors.add_metric(
-                    [pool['name'], pool['path'], label, "read"],
+                    [pool['name'], pool_path, label, "read"],
                     disk['stats']['read_errors']
                 )
                 disk_errors.add_metric(
-                    [pool['name'], pool['path'], label, "write"],
+                    [pool['name'], pool_path, label, "write"],
                     disk['stats']['write_errors']
                 )
                 disk_errors.add_metric(
-                    [pool['name'], pool['path'], label, "checksum"],
+                    [pool['name'], pool_path, label, "checksum"],
                     disk['stats']['checksum_errors']
                 )
 
